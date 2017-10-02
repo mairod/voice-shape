@@ -10,12 +10,7 @@ void main() {
     float test = abs(sin(time));
 
     vec3 pos;
-    if(uv.x > abs(sin(time))){
-        pos = vec3(.5, 1. - uv.x, 1.);
-        // pos = vec3(abs(uv.y - .5), abs(uv.y - .5), abs(uv.y - .5));
-    } else {
-        pos = vec3(.0, .0, .0);
-    }
+    pos = vec3(uv.x, uv.y * sin(time), uv.y);
 
     // vec3 pos = vec3(test * uv.x, 1.-test * uv.y, test);
 

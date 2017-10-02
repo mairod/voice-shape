@@ -118,6 +118,7 @@ class ThreeController {
         this.meshShader = new THREE.ShaderMaterial({
             uniforms: {
                 utime: { type: "f", value: 0 },
+                uAvancement: { type: "f", value: 0 },
                 simulationTex: { type: "t", value: FBO.rtt.texture },
             },
             vertexShader: require('../../shaders/meshShader.vert'),
@@ -127,7 +128,8 @@ class ThreeController {
         })
 
         let mesh = new THREE.Mesh(geom, this.meshShader)
-        mesh.rotation.x = - Math.PI / 2
+        mesh.rotation.x = - Math.PI / 3
+        this.mesh = mesh
         this.scene.add(mesh)
         
     
@@ -149,14 +151,18 @@ class ThreeController {
         if (this.dummmy != undefined) {
             this.dummmy.rotation.y += .01 * this.config.rotationSpeed.value
         }
+        
+        if (this.meshShader != undefined && Store.volume > 25) {
+            this.meshShader.uniforms.uAvancement.value += .005
+        }
 
         // camera
-        this.direction.subVectors(this.mouse, this.cameraPosition)
-        this.direction.multiplyScalar(.06)
-        this.cameraPosition.addVectors(this.cameraPosition, this.direction)
-        this.camera.position.x = this.cameraPosition.x * this.cameraEasing.x * -1
-        this.camera.position.y = -this.cameraPosition.y * this.cameraEasing.y * -1
-        this.camera.lookAt(new THREE.Vector3(0, 0, 0))
+        // this.direction.subVectors(this.mouse, this.cameraPosition)
+        // this.direction.multiplyScalar(.06)
+        // this.cameraPosition.addVectors(this.cameraPosition, this.direction)
+        // this.camera.position.x = this.cameraPosition.x * this.cameraEasing.x * -1
+        // this.camera.position.y = -this.cameraPosition.y * this.cameraEasing.y * -1
+        // this.camera.lookAt(new THREE.Vector3(0, 0, 0))
 
         this.renderer.render(this.scene, this.camera);
     }

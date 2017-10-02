@@ -1,6 +1,7 @@
 const Store = {
 
-    foo: []
+    time: 0,
+    volume: 0,
 
 }
 export default Store

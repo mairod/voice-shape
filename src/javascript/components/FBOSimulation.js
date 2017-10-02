@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import Store from '../utils/store'
 
 class FBO {
     constructor() {
