@@ -259,9 +259,16 @@ export class AudioAnalyzer {
             for (var i = 0; i < this.bufferLength; i++) {
                 barHeight = this.dataArray[i]
                 ctx.fillStyle = 'rgb(' + (barHeight + this.height) + ',50,50)'
+                ctx.strokeStyle = 'none'
                 ctx.fillRect(x, this.height - barHeight / 2, barWidth, barHeight / 2)
                 x += barWidth + 1
             }
+
+            
+            ctx.strokeStyle = 'green'
+            ctx.moveTo(0, this.height - this.volume / 2)
+            ctx.lineTo(this.width, this.height - this.volume / 2)
+            ctx.stroke()
             ctx.font = "12px Arial"
             ctx.fillStyle = 'white'
             ctx.fillText('Buffer Size: ' + this.bufferLength, this.width - 110, 30)

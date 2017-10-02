@@ -2,6 +2,7 @@ import * as TOOLS from './tools.class.js'
 import * as THREE from 'three'
 import Store from '../utils/store'
 import DebugController from './DebugController'
+import FBO from './FBOSimulation'
 
 class ThreeController {
 
@@ -28,17 +29,23 @@ class ThreeController {
         
         DebugController.register("config", this.config, "THREE controller")
 
-        this.init_loader()
-        this.init_environement()
-        this.init_camera()
-        this.init_event()
-        this.init_loader()
-        this.init_dummy()
-        this.update()
+        this.initLoader()
+        this.initEnvironement()
+        this.initCamera()
+        this.initEvent()
+        this.initLoader()
+        this.initFbo()
+        this.initMesh()
+        // this.initDummy()
+
+        // Debug
+        if (!DebugController.active) { return }
+        this.enableDebugSimulation()
+
 
     }
 
-    init_loader() {
+    initLoader() {
 
         this.manager = new THREE.LoadingManager();
         this.manager.onProgress = function (item, loaded, total) {
@@ -52,12 +59,12 @@ class ThreeController {
 
     }
 
-    init_camera() {
+    initCamera() {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
         this.camera.position.z = 200;
     }
 
-    init_environement() {
+    initEnvironement() {
 
         // this.scene.fog = new THREE.FogExp2(0xeaeaea, 0.0020)
 
@@ -77,7 +84,7 @@ class ThreeController {
         this.container.appendChild(this.renderer.domElement)
     }
 
-    init_event() {
+    initEvent() {
         var that = this
         window.addEventListener('resize', function () {
             that.width = window.innerWidth
@@ -94,12 +101,50 @@ class ThreeController {
 
     }
 
-    init_dummy(){
+    initDummy(){
         this.dummmy = new THREE.Mesh(new THREE.BoxBufferGeometry(10, 10, 10, 1), new THREE.MeshNormalMaterial())
         this.scene.add(this.dummmy)
     }
 
+    initFbo(){
+        FBO.init(this.renderer)
+    }
+
+    initMesh(){
+        let geom = new THREE.TorusBufferGeometry(100, 10, 30, 100)
+        // let geom = new THREE.CylinderBufferGeometry(20, 20, 100, 64, 1023, true)
+        // 265 * 256 Vertices (65536)
+
+        this.meshShader = new THREE.ShaderMaterial({
+            uniforms: {
+                utime: { type: "f", value: 0 },
+                simulationTex: { type: "t", value: FBO.rtt.texture },
+            },
+            vertexShader: require('../../shaders/meshShader.vert'),
+            fragmentShader: require('../../shaders/meshShader.frag'),
+            side: THREE.DoubleSide,
+            wireframe: true
+        })
+
+        let mesh = new THREE.Mesh(geom, this.meshShader)
+        mesh.rotation.x = - Math.PI / 2
+        this.scene.add(mesh)
+        
+    
+    }
+
+    enableDebugSimulation(){
+        let plane = new THREE.PlaneBufferGeometry(30, 30)
+        let bufferMaterial = new THREE.MeshBasicMaterial({ map: FBO.rtt.texture })
+        let mesh = new THREE.Mesh(plane, bufferMaterial)
+        mesh.position.y = - 65
+        mesh.position.x = 77
+        this.scene.add(mesh)
+    }
+
     update() {
+
+        FBO.update()
 
         if (this.dummmy != undefined) {
             this.dummmy.rotation.y += .01 * this.config.rotationSpeed.value
