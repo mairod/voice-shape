@@ -13,7 +13,7 @@ void main() {
     vec4 sim = (texture2D( simulationTex, uv.xy ) - .5) * 2.;
     sim *= 10.;
 
-    float heightFactor = 1.5;
+    float heightFactor = 2.;
     float heightDispl = heightFactor * sim.r;
 
     vec3 aPosition = position;
@@ -22,7 +22,7 @@ void main() {
 
     // displacement radius
     float simDisplRadius = sim.y;
-    float radiusFactor = 1.5;
+    float radiusFactor = .5;
     aPosition *= vec3(.5 + (simDisplRadius / length(aPosition)) * radiusFactor, .5 + (simDisplRadius / length(aPosition)) * radiusFactor, .5 + (simDisplRadius / length(aPosition)) * radiusFactor);
 
     vec4 newPosition;

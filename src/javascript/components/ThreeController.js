@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import Store from '../utils/store'
 import DebugController from './DebugController'
 import FBO from './FBOSimulation'
+import ReactiveRing from './reactiveRing'
 
 class ThreeController {
 
@@ -22,6 +23,9 @@ class ThreeController {
         this.time           = 0
 
         this.store = Store
+        this.store.scene = this.scene
+
+        this.rings = []
 
         this.config = {
             rotationSpeed: { value: 1, range: [0, 10] }
@@ -111,27 +115,12 @@ class ThreeController {
     }
 
     initMesh(){
-        let geom = new THREE.TorusBufferGeometry(100, 10, 30, 100)
-        // let geom = new THREE.CylinderBufferGeometry(20, 20, 100, 64, 1023, true)
-        // 265 * 256 Vertices (65536)
-
-        this.meshShader = new THREE.ShaderMaterial({
-            uniforms: {
-                utime: { type: "f", value: 0 },
-                uAvancement: { type: "f", value: 0 },
-                simulationTex: { type: "t", value: FBO.rtt.texture },
-            },
-            vertexShader: require('../../shaders/meshShader.vert'),
-            fragmentShader: require('../../shaders/meshShader.frag'),
-            side: THREE.DoubleSide,
-            wireframe: true
-        })
-
-        let mesh = new THREE.Mesh(geom, this.meshShader)
-        mesh.rotation.x = - Math.PI / 3
-        this.mesh = mesh
-        this.scene.add(mesh)
         
+        this.rings.push(
+            new ReactiveRing({
+
+            })
+        )
     
     }
 
@@ -151,9 +140,9 @@ class ThreeController {
         if (this.dummmy != undefined) {
             this.dummmy.rotation.y += .01 * this.config.rotationSpeed.value
         }
-        
-        if (this.meshShader != undefined && Store.volume > 25) {
-            this.meshShader.uniforms.uAvancement.value += .005
+
+        for (var i = 0; i < this.rings.length; i++) {
+           this.rings[i].update() 
         }
 
         // camera

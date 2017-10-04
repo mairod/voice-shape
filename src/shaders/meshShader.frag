@@ -6,10 +6,12 @@ void main() {
     vec2 uv = vUv;
     float avancement = vAvancement;
 
+
+
     if(uv.x >= vAvancement) {
         gl_FragColor = vec4( 0., 0., 0., 0. );
+    } else {
+        gl_FragColor = vec4( 1., 1., 1., 1. );
     }
-
-    gl_FragColor = vec4( 1., 1., 1., 1. );
 
 }
