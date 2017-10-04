@@ -48,7 +48,7 @@ class ReactiveRing {
         }
 
         this.avancement = Math.min(this.avancement, .91)
-        this.meshShader.uniforms.uAvancement.value = this.avancement
+        this.meshShader.uniforms.uAvancement.value = .91
         this.meshShader.uniforms.volume.value = Store.volume * -.1
 
     }
