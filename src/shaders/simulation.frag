@@ -1,6 +1,8 @@
 varying vec2 vUv;
 uniform float utime;
 
+uniform vec3 audioControl;
+
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex
 //               noise functions.
@@ -108,7 +110,7 @@ return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
 vec3 snoiseVec3( vec3 x ){
 
   float s  = snoise(vec3( x ));
-  float s1 = snoise(vec3( x.y - 19.1 , x.z + 33.4 , x.x + 47.2 ));
+  float s1 = snoise(vec3( x.y - 19.1 , x.z + 33.4 , x.x + 47.2 * (audioControl.z / 10000.) ));
   float s2 = snoise(vec3( x.z + 74.2 , x.x - 124.5 , x.y + 99.4 ));
   vec3 c = vec3( s , s1 , s2 );
   return c;
@@ -134,7 +136,7 @@ vec3 curlNoise( vec3 p ){
   float y = p_z1.x - p_z0.x - p_x1.z + p_x0.z;
   float z = p_x1.y - p_x0.y - p_y1.x + p_y0.x;
 
-  const float divisor = 1.0 / ( 2.0 * e );
+  float divisor = 1.0 / ( 2.0 * e ) + (audioControl.y * .1 );
   return normalize( vec3( x , y , z ) * divisor );
 
 }
@@ -143,21 +145,18 @@ vec3 curlNoise( vec3 p ){
 void main() {
 
     float time = utime / 200.;
-
     vec2 uv = vUv;
 
-    // float test = abs(sin(time));
+    vec3 noise = curlNoise(vec3((uv.x * 5.) + time, uv.y * 2., audioControl.r));
 
-    vec3 pos;
-    // pos = vec3(uv.x, uv.y * sin(time), uv.y);
-    vec3 noise = curlNoise(vec3((uv.x * 2.) + time, uv.y * 2., 0.));
+    float clampinUv;
+    if(uv.y < .5){
+        clampinUv = (uv.y * 2.) - .15;
+    } else {
+        clampinUv = (.95 - uv.y) * 2.;
+    }
+    vec3 finalColor = smoothstep(vec3(0., 0., 0.), 1. - noise, vec3(clampinUv, clampinUv, clampinUv));
 
-    // vec3 pos = vec3(test * uv.x, 1.-test * uv.y, test);
-
-
-
-
-
-    gl_FragColor = vec4( noise, 1. );
+    gl_FragColor = vec4( finalColor, 1. );
 
 }

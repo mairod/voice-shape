@@ -4,8 +4,12 @@ import Store from '../utils/store'
 class FBO {
     constructor() {
 
-        this.width = 128
-        this.height = 128
+        this.width = 512
+        this.height = 512
+
+        this.soundTarget = new THREE.Vector3(0, 0, 0)
+        this.soundTmp = new THREE.Vector3(0, 0, 0)
+        this.soundDir = new THREE.Vector3(0, 0, 0)
 
         this.createShader()
 
@@ -14,7 +18,8 @@ class FBO {
     createShader(){
         this.simulationShader = new THREE.ShaderMaterial({
             uniforms: {
-                utime: { type: "f", value: 0 }
+                utime: { type: "f", value: 0 },
+                audioControl: { type: "v3", value: this.soundTmp}
             },
             vertexShader: require('../../shaders/simulation.vert'),
             fragmentShader: require('../../shaders/simulation.frag'),
@@ -68,6 +73,19 @@ class FBO {
             
             // Update uniforms
             this.simulationShader.uniforms.utime.value += 1
+
+            // console.log(Store.audioControls[0].strength)
+
+            if (Store.audioControls.length > 0) {
+                this.soundTarget.x = Store.audioControls[0].strength * .5
+                this.soundTarget.y = Store.audioControls[1].strength * .5
+                this.soundTarget.z = Store.audioControls[2].strength * .5
+            }            
+
+            this.soundDir.subVectors(this.soundTarget, this.soundTmp)
+            this.soundDir.multiplyScalar(.1)
+            this.soundTmp.addVectors(this.soundTmp, this.soundDir)
+            this.simulationShader.uniforms.audioControl.value = this.soundTmp
 
             this.renderer.render(this.scene, this.orthoCamera, this.rtt, true)   
         }
