@@ -1,6 +1,7 @@
 import * as TOOLS from './tools.class.js'
 import * as THREE from 'three'
 import Store from '../utils/store'
+import Manifest from '../utils/manifest'
 import DebugController from './DebugController'
 import FBO from './FBOSimulation'
 import ReactiveRing from './reactiveRing'
@@ -52,6 +53,12 @@ class ThreeController {
     initLoader() {
 
         this.manager = new THREE.LoadingManager();
+
+        
+
+        Store.textureThree.matcap1 = new THREE.TextureLoader(this.manager).load(Manifest.matcap1)
+        Store.textureThree.noiseMap = new THREE.TextureLoader(this.manager).load(Manifest.noiseMap)
+
         this.manager.onProgress = function (item, loaded, total) {
             var progress = Math.round((loaded / total) * 100)
             if (progress == 100) {
@@ -146,12 +153,12 @@ class ThreeController {
         }
 
         // camera
-        // this.direction.subVectors(this.mouse, this.cameraPosition)
-        // this.direction.multiplyScalar(.06)
-        // this.cameraPosition.addVectors(this.cameraPosition, this.direction)
-        // this.camera.position.x = this.cameraPosition.x * this.cameraEasing.x * -1
-        // this.camera.position.y = -this.cameraPosition.y * this.cameraEasing.y * -1
-        // this.camera.lookAt(new THREE.Vector3(0, 0, 0))
+        this.direction.subVectors(this.mouse, this.cameraPosition)
+        this.direction.multiplyScalar(.06)
+        this.cameraPosition.addVectors(this.cameraPosition, this.direction)
+        this.camera.position.x = this.cameraPosition.x * this.cameraEasing.x * -1
+        this.camera.position.y = -this.cameraPosition.y * this.cameraEasing.y * -1
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0))
 
         this.renderer.render(this.scene, this.camera);
     }

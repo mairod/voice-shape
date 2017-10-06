@@ -147,7 +147,7 @@ void main() {
     float time = utime / 200.;
     vec2 uv = vUv;
 
-    vec3 noise = curlNoise(vec3((uv.x * 5.) + time, uv.y * 2., audioControl.r));
+    vec3 noise = curlNoise(vec3((uv.x * 5.) + time, uv.y * 2. + sin(time), audioControl.r));
 
     float clampinUv;
     if(uv.y < .5){

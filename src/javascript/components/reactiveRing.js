@@ -15,7 +15,7 @@ class ReactiveRing {
     }
 
     initMesh(){
-        let geom = new THREE.TorusBufferGeometry(50, 5, 60, 200)
+        let geom = new THREE.TorusBufferGeometry(50, 5, 30, 100)
         // let geom = new THREE.CylinderBufferGeometry(20, 20, 100, 64, 1023, true)
         // 265 * 256 Vertices (65536)
 
@@ -24,7 +24,10 @@ class ReactiveRing {
                 utime: { type: "f", value: 0 },
                 uAvancement: { type: "f", value: 0 },
                 volume: { type: "f", value: 0 },
+                utime: { type: "f", value: 0 },
                 simulationTex: { type: "t", value: FBO.rtt.texture },
+                matcap1: { type: "t", value: Store.textureThree.matcap1 },
+                noiseMap: { type: "t", value: Store.textureThree.noiseMap },
             },
             vertexShader: require('../../shaders/meshShader.vert'),
             fragmentShader: require('../../shaders/meshShader.frag'),
@@ -48,8 +51,9 @@ class ReactiveRing {
         }
 
         this.avancement = Math.min(this.avancement, .91)
-        this.meshShader.uniforms.uAvancement.value = .91
+        this.meshShader.uniforms.uAvancement.value = this.avancement
         this.meshShader.uniforms.volume.value = Store.volume * -.1
+        this.meshShader.uniforms.utime.value = Store.time
 
     }
 }

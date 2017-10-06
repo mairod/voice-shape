@@ -4,6 +4,10 @@ const Store = {
     volume: 0,
     scene: null,
     audioControls: [],
+    
+    // Storing textures
+    textureThree: {},
+
 
 }
 export default Store

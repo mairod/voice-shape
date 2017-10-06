@@ -22,13 +22,11 @@ void main() {
     vec4 sim = (texture2D( simulationTex, uv.xy ) - .5) * 2.;
     sim *= 10.;
 
-
-
     ///////////////////////////
     // Along normal displacement 
 
     
-    float displacement = sim.b * .2 * volume / 2.;
+    float displacement = .1;
     // Closing tops Start
     if(uv.x < .1){
         // displacement *= smoothstep(0., 1., uv.x);
@@ -43,6 +41,11 @@ void main() {
         float i = (smoothstep(0., 1., (uv.x - uAvancement) * 15. )  * -(radius + displacement)) + displacement;
         displacement = i;
         heightFactor *= 1. - smoothstep(0., 1., (uv.x - uAvancement) * 15. );
+    }
+
+    // Displacement ripple
+    if(uv.x > .1 && uv.x < uAvancement - .1){
+        // displacement *= smoothstep(0., 1., (uv.x - uAvancement) * 30. );
     }
 
 
@@ -63,8 +66,11 @@ void main() {
     // } else {
     // }
 
+    // Matcaping
     e = normalize( vec3( modelViewMatrix * vec4( newPosition, 1.0 ) ) );
     n = normalize( normalMatrix * normal );
+
+
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
 }

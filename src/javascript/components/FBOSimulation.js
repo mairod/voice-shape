@@ -4,8 +4,8 @@ import Store from '../utils/store'
 class FBO {
     constructor() {
 
-        this.width = 512
-        this.height = 512
+        this.width = 128
+        this.height = 128
 
         this.soundTarget = new THREE.Vector3(0, 0, 0)
         this.soundTmp = new THREE.Vector3(0, 0, 0)

@@ -33,8 +33,8 @@ class MicroInput {
         Store.analizer = this.analizer
         DebugController.displayAudioAnalizer()
         this.analizer.addControlPoint({ bufferPosition: 1 })
-        this.analizer.addControlPoint({ bufferPosition: 8 })
-        this.analizer.addControlPoint({ bufferPosition: 15 })
+        this.analizer.addControlPoint({ bufferPosition: 20 })
+        this.analizer.addControlPoint({ bufferPosition: 45 })
         
         Store.volume = this.analizer.volume
         Store.audioControls = this.analizer.controls
