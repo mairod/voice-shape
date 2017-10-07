@@ -57,7 +57,9 @@ class ThreeController {
         
 
         Store.textureThree.matcap1 = new THREE.TextureLoader(this.manager).load(Manifest.matcap1)
-        Store.textureThree.noiseMap = new THREE.TextureLoader(this.manager).load(Manifest.noiseMap)
+        Store.textureThree.noiseMap = new THREE.TextureLoader(this.manager).load(Manifest.noiseMap, function (texture) {
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        })
 
         this.manager.onProgress = function (item, loaded, total) {
             var progress = Math.round((loaded / total) * 100)
@@ -142,7 +144,7 @@ class ThreeController {
 
     update() {
 
-        FBO.update()
+        // FBO.update()
 
         if (this.dummmy != undefined) {
             this.dummmy.rotation.y += .01 * this.config.rotationSpeed.value

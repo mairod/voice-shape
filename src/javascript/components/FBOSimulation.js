@@ -11,7 +11,7 @@ class FBO {
         this.soundTmp = new THREE.Vector3(0, 0, 0)
         this.soundDir = new THREE.Vector3(0, 0, 0)
 
-        this.createShader()
+        // this.createShader()
 
     }
 
