@@ -3,13 +3,21 @@ import DebugController from './components/DebugController'
 import MicroInput from './components/MicroInput'
 import Store from './utils/store'
 
+let Three
+MicroInput.init().then(()=>{
 
-let Three = new ThreeController({
-    container: document.querySelector('#container')
+    // when context linked
+    console.log('Audio created')
+    
+
+    Three = new ThreeController({
+        container: document.querySelector('#container')
+    })
+    // start animating
+    animate()
 })
 
-// start animating
-animate();
+
 
 function animate() {
     requestAnimationFrame(animate);

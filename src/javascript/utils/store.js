@@ -4,6 +4,7 @@ const Store = {
     volume: 0,
     scene: null,
     audioControls: [],
+    avancement: 0,
     
     // Storing textures
     textureThree: {},

@@ -1,8 +1,6 @@
 uniform float uAvancement;
 uniform float volume;
-uniform float radius;
 uniform sampler2D noiseMap;
-uniform sampler2D simulationTex;
 uniform float utime;
 uniform float height;
 
@@ -22,15 +20,14 @@ void main() {
     float heightFactor = .1;
 
     // TO BE UNIFORMS
-    // float radius = 5.;
+    float radius = 5.;
 
     ///////////////////////////
     // Along normal displacement 
 
-    vec4 sim = texture2D(simulationTex, uv);
+    
     vec3 elevation = texture2D( noiseMap, vec2( (uv.x * 4.) + time, uv.y) ).rgb;
-    // float displacement = .1 +( elevation.x * height);
-    float displacement = .1 + (sim.a * height) + (sim.r * 4.);
+    float displacement = .1 +( elevation.x * height);
 
     // Closing tops Start
     if(uv.x < .1){

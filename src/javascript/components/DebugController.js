@@ -29,7 +29,7 @@ class DebugController {
         this.panel = controlKit.addPanel({
             label: 'debug GUI'
         })
-        this.framerate = new TOOLS.FrameRateUI()
+        // this.framerate = new TOOLS.FrameRateUI()
     }
 
     displayAudioAnalizer(){
@@ -52,7 +52,11 @@ class DebugController {
         for (var key in object) {
             if (!object.hasOwnProperty(key)) continue
             let sub = object[key]
-            group.addSlider(sub, 'value', 'range', { label: key})
+            if (sub.guiType == "color") {
+                group.addColor(sub, 'value', { colorMode: 'rgbfv' })
+            } else {
+                group.addSlider(sub, 'value', 'range', { label: key})
+            }
         }
     }
 

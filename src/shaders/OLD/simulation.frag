@@ -2,7 +2,6 @@ varying vec2 vUv;
 uniform float utime;
 
 uniform vec3 audioControl;
-uniform sampler2D audioData;
 
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex
@@ -118,22 +117,46 @@ vec3 snoiseVec3( vec3 x ){
 
 }
 
+
+vec3 curlNoise( vec3 p ){
+  
+  const float e = .1;
+  vec3 dx = vec3( e   , 0.0 , 0.0 );
+  vec3 dy = vec3( 0.0 , e   , 0.0 );
+  vec3 dz = vec3( 0.0 , 0.0 , e   );
+
+  vec3 p_x0 = snoiseVec3( p - dx );
+  vec3 p_x1 = snoiseVec3( p + dx );
+  vec3 p_y0 = snoiseVec3( p - dy );
+  vec3 p_y1 = snoiseVec3( p + dy );
+  vec3 p_z0 = snoiseVec3( p - dz );
+  vec3 p_z1 = snoiseVec3( p + dz );
+
+  float x = p_y1.z - p_y0.z - p_z1.y + p_z0.y;
+  float y = p_z1.x - p_z0.x - p_x1.z + p_x0.z;
+  float z = p_x1.y - p_x0.y - p_y1.x + p_y0.x;
+
+  float divisor = 1.0 / ( 2.0 * e ) + (audioControl.y * .1 );
+  return normalize( vec3( x , y , z ) * divisor );
+
+}
+
+
 void main() {
 
     float time = utime / 200.;
     vec2 uv = vUv;
 
-    // int index = int(uv.y * 128.);
-    // float f = getData(1);
-    // float volume = audioData[index];
+    vec3 noise = curlNoise(vec3((uv.x * 5.) + time, uv.y * 2. + sin(time), audioControl.r));
 
-    // float test = float(audioData[1]);
+    float clampinUv;
+    if(uv.y < .5){
+        clampinUv = (uv.y * 2.) - .15;
+    } else {
+        clampinUv = (.95 - uv.y) * 2.;
+    }
+    vec3 finalColor = smoothstep(vec3(0., 0., 0.), 1. - noise, vec3(clampinUv, clampinUv, clampinUv));
 
-    float volume = texture2D( audioData, uv ).r;
-    vec3 noise = snoiseVec3(vec3(uv * 3., time));
-
-    vec3 finalColor = vec3(volume, volume, volume);
-
-    gl_FragColor = vec4( noise, volume );
+    gl_FragColor = vec4( finalColor, 1. );
 
 }

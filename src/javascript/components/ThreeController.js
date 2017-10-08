@@ -144,7 +144,7 @@ class ThreeController {
 
     update() {
 
-        // FBO.update()
+        FBO.update()
 
         if (this.dummmy != undefined) {
             this.dummmy.rotation.y += .01 * this.config.rotationSpeed.value

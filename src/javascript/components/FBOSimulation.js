@@ -4,30 +4,72 @@ import Store from '../utils/store'
 class FBO {
     constructor() {
 
-        this.width = 128
-        this.height = 128
+        this.active = false
+
+        this.width = 512
+        this.height = 512
 
         this.soundTarget = new THREE.Vector3(0, 0, 0)
         this.soundTmp = new THREE.Vector3(0, 0, 0)
         this.soundDir = new THREE.Vector3(0, 0, 0)
 
-        // this.createShader()
+        this.oldActivePixelLine = 0
 
     }
 
-    createShader(){
+    init2dContext(){
+
+        this.canvas2d = document.createElement('canvas')
+        this.canvas2d.width = this.canvas2d.height = this.width
+        this.canvas2dContext = this.canvas2d.getContext('2d')
+
+        // this.canvas2d.style.position = "fixed"
+        // this.canvas2d.style.zIndex = "100"
+        // document.body.appendChild(this.canvas2d)
+
+        this.audioDataTexture = new THREE.Texture(this.canvas2d)
+
+    }
+
+    render2dCanvas(){
+
+        let activePixelLine = Math.ceil(Store.avancement * this.width * 1.09)
+                
+        if (activePixelLine <= this.oldActivePixelLine) { return }
+        
+        let width = (activePixelLine - this.oldActivePixelLine) + 1
+        
+        let ctx = this.canvas2dContext
+        for (var i = 0; i < Store.audioData.length; i++) {
+            var peak = Store.audioData[i]
+            ctx.fillStyle = `rgb(${peak}, ${peak}, ${peak})`
+            ctx.fillRect(activePixelLine, i * 4, width, 4)       
+        }
+        this.oldActivePixelLine = activePixelLine
+
+        this.audioDataTexture.needsUpdate = true 
+            
+    }
+
+    createShader(){        
+
         this.simulationShader = new THREE.ShaderMaterial({
             uniforms: {
                 utime: { type: "f", value: 0 },
-                audioControl: { type: "v3", value: this.soundTmp}
+                audioControl: { type: "v3", value: this.soundTmp},
+                audioData: { type: "t", value: this.audioDataTexture } ,
             },
             vertexShader: require('../../shaders/simulation.vert'),
             fragmentShader: require('../../shaders/simulation.frag'),
             transparent: true,
         })
+
     }
 
     init(renderer) {
+
+        this.init2dContext()        
+        this.createShader()
 
         let gl = renderer.getContext()
 
@@ -63,6 +105,7 @@ class FBO {
         geom.addAttribute('position', new THREE.BufferAttribute(new Float32Array([-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, 1, 0, -1, 1, 0]), 3))
         geom.addAttribute('uv', new THREE.BufferAttribute(new Float32Array([0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0]), 2))
         this.scene.add(new THREE.Mesh(geom, this.simulationShader))
+        // this.scene.add(new THREE.Mesh(geom, new THREE.MeshBasicMaterial({ map: this.audioDataTexture})))
 
         this.renderer = renderer
     }
@@ -70,11 +113,12 @@ class FBO {
     update() {
         //1 update the simulation and render the result in a target texture
         if (this.renderer != undefined) {
+
+            // console.log(Store.audioData)
+            this.render2dCanvas()
             
             // Update uniforms
             this.simulationShader.uniforms.utime.value += 1
-
-            // console.log(Store.audioControls[0].strength)
 
             if (Store.audioControls.length > 0) {
                 this.soundTarget.x = Store.audioControls[0].strength * .5

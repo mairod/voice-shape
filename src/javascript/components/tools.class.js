@@ -181,6 +181,8 @@ export class AudioAnalyzer {
         this.audio.context = new(window.AudioContext || window.webkitAudioContext)()
         var that = this
         this.analyser = this.audio.context.createAnalyser()
+        console.log(this.analyser.maxDecibels)
+        
         this.analyser.minDecibels = -90
         this.analyser.maxDecibels = -10
         this.analyser.smoothingTimeConstant = 0.85
@@ -249,6 +251,9 @@ export class AudioAnalyzer {
             middle += this.dataArray[i]
         }
         this.volume = middle / this.bufferLength
+
+        // Return le max d'un tableau
+        // this.volume = Math.max.apply(null, this.dataArray)
 
         if (this.active) { 
             var ctx = this.context

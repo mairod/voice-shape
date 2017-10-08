@@ -8,7 +8,8 @@
   "dependencies": {
     "controlkit": "^0.1.9",
     "three": "^0.87.1",
-    "three.js": "^0.77.1"
+    "three.js": "^0.77.1",
+    "when": "^3.7.8"
   },
   "paths": {},
   "devDependencies": {

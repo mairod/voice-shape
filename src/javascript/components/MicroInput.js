@@ -1,11 +1,18 @@
-import * as TOOLS from './tools.class.js'
 import Store from '../utils/store'
 import DebugController from './DebugController'
+import AudioAnalyzer from './audioAnalyzer'
+
+import when from 'when'
+
+let defer = when.defer()
 
 class MicroInput {
 
-    constructor(){
+    constructor(){}
+
+    init(){
         this.checkSupport()
+        return defer.promise
     }
 
     checkSupport(){
@@ -25,9 +32,13 @@ class MicroInput {
 
     startMic(stream){
         
-        this.analizer = new TOOLS.AudioAnalyzer({
+        this.analizer = new AudioAnalyzer({
             stream: stream,
-            samplingFrequency: 128
+            samplingFrequency: 256
+        })
+
+        this.analizer.init().then(()=>{
+            defer.resolve()
         })
 
         Store.analizer = this.analizer
@@ -38,6 +49,7 @@ class MicroInput {
         
         Store.volume = this.analizer.volume
         Store.audioControls = this.analizer.controls
+        Store.audioData = this.analizer.dataArray
 
     }
 
