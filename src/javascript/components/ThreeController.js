@@ -20,7 +20,7 @@ class ThreeController {
         this.mouse          = new THREE.Vector2(0, 0)
         this.direction      = new THREE.Vector2(0, 0)
         this.cameraPosition = new THREE.Vector2(0, 0)
-        this.cameraEasing   = { x: 100, y: 10 }
+        this.cameraEasing   = { x: 100, y: 100 }
         this.time           = 0
 
         this.store = Store

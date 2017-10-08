@@ -6,9 +6,6 @@ class FBO {
 
         this.active = false
 
-        this.width = 512
-        this.height = 512
-
         this.soundTarget = new THREE.Vector3(0, 0, 0)
         this.soundTmp = new THREE.Vector3(0, 0, 0)
         this.soundDir = new THREE.Vector3(0, 0, 0)
@@ -43,7 +40,7 @@ class FBO {
         for (var i = 0; i < Store.audioData.length; i++) {
             var peak = Store.audioData[i]
             ctx.fillStyle = `rgb(${peak}, ${peak}, ${peak})`
-            ctx.fillRect(activePixelLine, i * 4, width, 4)       
+            ctx.fillRect(activePixelLine, i , width, 1)       
         }
         this.oldActivePixelLine = activePixelLine
 
@@ -67,9 +64,13 @@ class FBO {
     }
 
     init(renderer) {
-
+        
+        this.width = Store.audioData.length
+        this.height = Store.audioData.length
+        
         this.init2dContext()        
         this.createShader()
+
 
         let gl = renderer.getContext()
 

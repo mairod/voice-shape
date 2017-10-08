@@ -34,7 +34,7 @@ class MicroInput {
         
         this.analizer = new AudioAnalyzer({
             stream: stream,
-            samplingFrequency: 256
+            samplingFrequency: 1024
         })
 
         this.analizer.init().then(()=>{
