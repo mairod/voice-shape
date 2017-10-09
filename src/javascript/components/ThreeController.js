@@ -25,7 +25,7 @@ class ThreeController {
         this.rotation_direction = new THREE.Vector2(0, 0)
         this.camera_rotation    = new THREE.Vector2(0, 0)
         this.camera_direction   = new THREE.Vector3(0, 0, 0)
-        this.camera_position    = new THREE.Vector3(0, 0, -1)
+        this.camera_position    = new THREE.Vector3(0, 0, 0)
         this.cameraEasing       = { x: 2, y: 2 }
         this.time               = 0
 
@@ -173,7 +173,7 @@ class ThreeController {
 
     initBackground(){
 
-        let geom = new THREE.PlaneBufferGeometry(this.width / 3.5, this.height / 3.5)
+        let geom = new THREE.PlaneBufferGeometry(this.width / 3.2, this.height / 3.2)
 
         let colors = Store.gradients[Math.floor(Store.gradients.length * Math.random())]
 
