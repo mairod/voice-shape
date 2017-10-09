@@ -46,7 +46,8 @@ void main() {
     vec3 color;
 
     color = mix(inputColor1, inputColor2, smoothstep(.5 - blending, .5 + blending, sim.a * topHeight));
-    color *= 1. + intensity * .5; 
+    color *= .5 + intensity ; 
+    // color *= 1. + intensity * .5; 
     color *= (luminance(color) * .5) + .6;
 
     float alpha = 1.;

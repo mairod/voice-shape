@@ -130,7 +130,7 @@ void main() {
     // float test = float(audioData[1]);
 
     float volume = texture2D( audioData, uv ).r;
-    vec3 noise = snoiseVec3(vec3(uv * 3., time));
+    vec3 noise = snoiseVec3(vec3(uv * 5., time));
 
     vec3 finalColor = vec3(volume, volume, volume);
 

@@ -7,15 +7,16 @@ import DebugController from './DebugController'
 class ReactiveRing {
     constructor(options){
 
-        this.store = Store
-        this.scene = Store.scene
-        this.avancement = 0
-        this.config = {}
+        this.store         = Store
+        this.scene         = Store.scene
+        this.avancement    = 0
+        this.config        = {}
         this.defaultRadius = 2
+        this.index         = options.index        
 
-        this.volumeTarget = new THREE.Vector3(0, 0, 0)
-        this.volumeTmp = new THREE.Vector3(0, 0, 0)
-        this.volumeDir = new THREE.Vector3(0, 0, 0)
+        this.volumeTarget  = new THREE.Vector3(0, 0, 0)
+        this.volumeTmp     = new THREE.Vector3(0, 0, 0)
+        this.volumeDir     = new THREE.Vector3(0, 0, 0)
 
         this.initMesh()
 
@@ -26,7 +27,8 @@ class ReactiveRing {
     }
 
     initMesh(){
-        let geom = new THREE.TorusBufferGeometry(50, this.defaultRadius, 30, 200)
+        
+        let geom = new THREE.TorusBufferGeometry(30 * (this.index + 1) , this.defaultRadius, 30, 200)
         // let geom = new THREE.CylinderBufferGeometry(20, 20, 100, 64, 1023, true)
         // 265 * 256 Vertices (65536)
         
@@ -44,7 +46,8 @@ class ReactiveRing {
                 // PARAMS
                 topHeight: { type: "f", value: 1.5, gui: true, range: [0, 5] },
                 blending: { type: "f", value: .45, gui: true, range: [0, 1] },
-                height: { type: "f", value: 25, gui: true, range: [0, 50] },
+                height: { type: "f", value: 40, gui: true, range: [0, 50] },
+                noiseHeight: { type: "f", value: 10, gui: true, range: [0, 50] },
                 inputColor1: { type: "v3", value: [0.39215686274509803, 0.2196078431372549, 0.8196078431372549], guiType:"color", gui: true, range: [0, 1] },
                 inputColor2: { type: "v3", value: [0, 0.615686274509804, 1], guiType:"color", gui: true, range: [0, 1] },
                 
@@ -60,7 +63,11 @@ class ReactiveRing {
 
 
         let mesh = new THREE.Mesh(geom, this.meshShader)
-        mesh.rotation.x = - Math.PI / 3
+
+        mesh.rotation.x = Math.PI * 2 * Math.random()
+        mesh.rotation.y = Math.PI * 2 * Math.random()
+        mesh.rotation.z = Math.PI * 2 * Math.random()
+
         this.mesh = mesh
         this.scene.add(mesh)
     }
