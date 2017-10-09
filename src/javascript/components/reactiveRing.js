@@ -28,9 +28,22 @@ class ReactiveRing {
 
     initMesh(){
         
-        let geom = new THREE.TorusBufferGeometry(30 * (this.index + 1) , this.defaultRadius, 30, 200)
+        let geom = new THREE.TorusBufferGeometry(40 * (this.index + 1) , this.defaultRadius, 30, 200)
         // let geom = new THREE.CylinderBufferGeometry(20, 20, 100, 64, 1023, true)
         // 265 * 256 Vertices (65536)
+
+        // Pick colors
+        let colors = Store.gradients[Math.floor(Store.gradients.length * Math.random())]
+
+        // Convert color to vector
+        function hexToRgbfv(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+            return result ? [
+                parseInt(result[1], 16) / 255,
+                parseInt(result[2], 16) / 255,
+                parseInt(result[3], 16) / 255
+             ] : null
+        }        
         
         this.meshShader = new THREE.ShaderMaterial({
             uniforms: {
@@ -40,16 +53,14 @@ class ReactiveRing {
                 radius: { type: "f", value: this.defaultRadius },
                 simulationTex: { type: "t", value: FBO.rtt.texture },
                 matcap1: { type: "t", value: Store.textureThree.matcap1 },
-                noiseMap: { type: "t", value: Store.textureThree.noiseMap },
-
 
                 // PARAMS
                 topHeight: { type: "f", value: 1.5, gui: true, range: [0, 5] },
                 blending: { type: "f", value: .45, gui: true, range: [0, 1] },
-                height: { type: "f", value: 40, gui: true, range: [0, 50] },
+                height: { type: "f", value: 20 * (this.index + 1), gui: true, range: [0, 50] },
                 noiseHeight: { type: "f", value: 10, gui: true, range: [0, 50] },
-                inputColor1: { type: "v3", value: [0.39215686274509803, 0.2196078431372549, 0.8196078431372549], guiType:"color", gui: true, range: [0, 1] },
-                inputColor2: { type: "v3", value: [0, 0.615686274509804, 1], guiType:"color", gui: true, range: [0, 1] },
+                inputColor1: { type: "v3", value: hexToRgbfv(colors[0]), guiType:"color", gui: true, range: [0, 1] },
+                inputColor2: { type: "v3", value: hexToRgbfv(colors[1]), guiType:"color", gui: true, range: [0, 1] },
                 
             },
             vertexShader: require('../../shaders/meshShader_1.vert'),
@@ -64,7 +75,7 @@ class ReactiveRing {
 
         let mesh = new THREE.Mesh(geom, this.meshShader)
 
-        mesh.rotation.x = Math.PI * 2 * Math.random()
+        // mesh.rotation.x = Math.PI * 2 * Math.random()
         mesh.rotation.y = Math.PI * 2 * Math.random()
         mesh.rotation.z = Math.PI * 2 * Math.random()
 

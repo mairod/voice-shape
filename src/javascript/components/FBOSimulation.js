@@ -37,10 +37,10 @@ class FBO {
         let width = (activePixelLine - this.oldActivePixelLine) + 1
         
         let ctx = this.canvas2dContext
-        for (var i = 0; i < Store.audioData.length; i++) {
+        for (var i = 0; i < (Store.audioData.length / 4) + 4; i++) {
             var peak = Store.audioData[i]
             ctx.fillStyle = `rgb(${peak}, ${peak}, ${peak})`
-            ctx.fillRect(activePixelLine, i , width, 1)       
+            ctx.fillRect(activePixelLine, i * 4 , width, 4)       
         }
         this.oldActivePixelLine = activePixelLine
 

@@ -2,10 +2,10 @@ import * as TOOLS from './tools.class.js'
 import * as THREE from 'three'
 import normalizeWheel from 'normalize-wheel'
 import Store from '../utils/store'
-import Manifest from '../utils/manifest'
 import DebugController from './DebugController'
 import FBO from './FBOSimulation'
 import ReactiveRing from './reactiveRing'
+import Snow from './snow'
 
 class ThreeController {
 
@@ -19,13 +19,13 @@ class ThreeController {
         this.assets             = new Object()
         this.scene              = new THREE.Scene()
         this.group              = new THREE.Group()
-        this.mouse              = new THREE.Vector3(0, 0, -.2)
+        this.mouse              = new THREE.Vector3(0, 0, -.3)
         this.mouse_drag         = new THREE.Vector2(0, 0)
         this.drag_rotation      = new THREE.Vector2(0, 0)
         this.rotation_direction = new THREE.Vector2(0, 0)
         this.camera_rotation    = new THREE.Vector2(0, 0)
-        this.camera_direction   = new THREE.Vector3(0, 0)
-        this.camera_position    = new THREE.Vector3(0, 0)
+        this.camera_direction   = new THREE.Vector3(0, 0, 0)
+        this.camera_position    = new THREE.Vector3(0, 0, -1)
         this.cameraEasing       = { x: 2, y: 2 }
         this.time               = 0
 
@@ -41,39 +41,20 @@ class ThreeController {
         
         DebugController.register("config", this.config, "THREE controller")
 
-        this.initLoader()
         this.initEnvironement()
         this.initCamera()
         this.initEvent()
-        this.initLoader()
         this.initFbo()
         this.initMesh()
+        this.initSnow()
+        this.initBackground()
+        this.initSphere()
         // this.initDummy()
 
         // Debug
         if (!DebugController.active) { return }
         this.enableDebugSimulation()
 
-
-    }
-
-    initLoader() {
-
-        this.manager = new THREE.LoadingManager()
-
-        Store.textureThree.matcap1 = new THREE.TextureLoader(this.manager).load(Manifest.matcap1)
-        Store.textureThree.noiseMap = new THREE.TextureLoader(this.manager).load(Manifest.noiseMap, function (texture) {
-            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        })
-
-        this.manager.onProgress = function (item, loaded, total) {
-            var progress = Math.round((loaded / total) * 100)
-            if (progress == 100) {
-                setTimeout(function () {
-
-                }, 1000);
-            }
-        }
 
     }
 
@@ -92,12 +73,6 @@ class ThreeController {
         });
         this.renderer.setPixelRatio(window.devicePixelRatio)
         this.renderer.setSize(this.width, this.height)
-
-        // this.renderer.shadowMap.enabled = true
-        // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
-        // this.renderer.shadowMapWidth = 1024
-        // this.renderer.shadowMapHeight = 1024
-        // this.renderer.sortObjects = false
 
         this.container.appendChild(this.renderer.domElement)
     }
@@ -174,6 +149,53 @@ class ThreeController {
     
     }
 
+    initSnow(){
+        this.snow = new Snow({
+            scene: this.group,
+        })        
+    }
+
+    initSphere(){
+
+        let geom = new THREE.SphereBufferGeometry(20, 20, 20)
+
+        let material = new THREE.ShaderMaterial({
+            uniforms: {
+                matcap: { type: "t", value: Store.textureThree.matcap1 },
+            },
+            vertexShader: require('../../shaders/sphere.vert'),
+            fragmentShader: require('../../shaders/sphere.frag'),
+        })
+
+        this.group.add(new THREE.Mesh(geom, material))
+
+    }
+
+    initBackground(){
+
+        let geom = new THREE.PlaneBufferGeometry(this.width / 3.5, this.height / 3.5)
+
+        let colors = Store.gradients[Math.floor(Store.gradients.length * Math.random())]
+
+        this.backgroundShader = new THREE.ShaderMaterial({
+            uniforms: {
+                utime: { type: "f", value: 0 },
+                offset: { type: "f", value: 0 },
+                background: { type: "t", value: Store.textureThree.background },
+                color1: { type: "v3", value: new THREE.Color(colors[0]) },
+                color2: { type: "v3", value: new THREE.Color(colors[1]) },
+            },
+            vertexShader: require('../../shaders/simulation.vert'),
+            fragmentShader: require('../../shaders/background.frag'),
+        })
+
+        this.background = new THREE.Mesh(geom, this.backgroundShader)
+        this.scene.add(this.background)
+
+        this.background.position.z = -100
+
+    }
+
     enableDebugSimulation(){
         let plane = new THREE.PlaneBufferGeometry(30, 30)
         let bufferMaterial = new THREE.MeshBasicMaterial({ map: FBO.rtt.texture })
@@ -191,17 +213,15 @@ class ThreeController {
             this.dummmy.rotation.y += .01 * this.config.rotationSpeed.value
         }
 
+        if (this.snow != undefined) {
+            this.snow.update()
+        }
+
         for (var i = 0; i < this.rings.length; i++) {
            this.rings[i].update()
         }
 
-        // camera
-        // this.direction.subVectors(this.mouse, this.cameraPosition)
-        // this.direction.multiplyScalar(.06)
-        // this.cameraPosition.addVectors(this.cameraPosition, this.direction)
-        // this.camera.position.x = this.cameraPosition.x * this.cameraEasing.x * -1
-        // this.camera.position.y = -this.cameraPosition.y * this.cameraEasing.y * -1
-        
+      
         // Vector Stuff
         this.rotation_direction.subVectors(this.drag_rotation, this.camera_rotation)
         this.rotation_direction.multiplyScalar(.08)
@@ -211,18 +231,16 @@ class ThreeController {
         this.camera_direction.multiplyScalar(.08)
         this.camera_position.addVectors(this.camera_position, this.camera_direction)
         
-        // Component Stuff
-        
-        
-        // this.group.rotation.y = this.camera_rotation.x * this.camera_easing
-        // console.log(this.camera_rotation.x * this.cameraEasing.x);
-        
         this.group.rotation.y = this.camera_rotation.x * this.cameraEasing.x
-        this.group.rotation.x = this.camera_rotation.y * this.cameraEasing.y
+        // this.group.rotation.x = this.camera_rotation.y * this.cameraEasing.y
         this.group.scale.set(1 + this.camera_position.z, 1 + this.camera_position.z, 1 + this.camera_position.z)
+        this.background.scale.set(1.5 + this.camera_position.z, 1.5 + this.camera_position.z, 1.5 + this.camera_position.z)
         this.camera.lookAt(new THREE.Vector3(0, 0, 0))
-        
 
+        // offset background
+        this.backgroundShader.uniforms.offset.value = this.camera_rotation.x * this.cameraEasing.x * .3
+        
+        // Render 
         this.renderer.render(this.scene, this.camera);
     }
 

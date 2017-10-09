@@ -68,7 +68,7 @@ void main() {
 
     // Matcaping
     e = normalize( vec3( modelViewMatrix * vec4( newPosition, 1.0 ) ) );
-    n = normalize( normalMatrix * normal );
+    n = normalize( normalMatrix * normal * displacement );
 
 
 

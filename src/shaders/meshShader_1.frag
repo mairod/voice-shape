@@ -26,6 +26,7 @@ void main() {
     vec2 uv = vUv;
     float avancement = vAvancement;
     float time = utime / 100.;
+    float reflectivity = .5;
 
     // Matcaping
     vec3 r = reflect( e, n );
@@ -46,8 +47,8 @@ void main() {
     vec3 color;
 
     color = mix(inputColor1, inputColor2, smoothstep(.5 - blending, .5 + blending, sim.a * topHeight));
-    color *= .5 + intensity ; 
-    // color *= 1. + intensity * .5; 
+    // color *= base ; 
+    color *= (1. - reflectivity) + base * reflectivity; 
     color *= (luminance(color) * .5) + .6;
 
     float alpha = 1.;
