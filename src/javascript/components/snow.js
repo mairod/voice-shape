@@ -9,7 +9,7 @@ class Snow {
         this.blending      = 'AdditiveBlending'
         this.scene         = options.scene
         this.parameters    = { 
-            count: 3000,
+            count: 5000,
             wind: { x: 0, y: 0, z: 0 },
             noise_intensity: 60,
             gravity: 100,
@@ -24,7 +24,7 @@ class Snow {
         this.gravity       = this.parameters.gravity
         this.time_scale    = 1
         this.time          = 0
-        this.particle_size = 300
+        this.particle_size = 500
         this.pixel_ratio   = window.devicePixelRatio
 
         this.init()

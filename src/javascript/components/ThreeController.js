@@ -44,6 +44,7 @@ class ThreeController {
         this.initEnvironement()
         this.initCamera()
         this.initEvent()
+        this.pickColor()
         this.initFbo()
         this.initMesh()
         this.initSnow()
@@ -133,6 +134,10 @@ class ThreeController {
         this.scene.add(this.dummmy)
     }
 
+    pickColor(){
+        Store.activeColor = Store.gradients[Math.floor(Store.gradients.length * Math.random())]
+    }
+
     initFbo(){
         FBO.init(this.renderer)
     }
@@ -175,7 +180,8 @@ class ThreeController {
 
         let geom = new THREE.PlaneBufferGeometry(this.width / 3.2, this.height / 3.2)
 
-        let colors = Store.gradients[Math.floor(Store.gradients.length * Math.random())]
+        // let colors = Store.gradients[Math.floor(Store.gradients.length * Math.random())]
+        let colors = [Store.activeColor[4], Store.activeColor[5]]
 
         this.backgroundShader = new THREE.ShaderMaterial({
             uniforms: {

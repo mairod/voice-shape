@@ -33,7 +33,8 @@ class ReactiveRing {
         // 265 * 256 Vertices (65536)
 
         // Pick colors
-        let colors = Store.gradients[Math.floor(Store.gradients.length * Math.random())]
+        let i = this.index + 1
+        let colors = [Store.activeColor[i], Store.activeColor[i + 1]]
 
         // Convert color to vector
         function hexToRgbfv(hex) {
