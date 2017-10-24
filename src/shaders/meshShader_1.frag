@@ -3,6 +3,7 @@ uniform sampler2D noiseMap;
 uniform sampler2D simulationTex;
 
 uniform float utime;
+uniform float opacity;
 uniform float topHeight;
 uniform float height;
 uniform float blending;
@@ -55,6 +56,8 @@ void main() {
     if(uv.x >= vAvancement + .1) {
         alpha = 0.;
     }
+
+    // alpha *= opacity;
 
     gl_FragColor = vec4( color, alpha );
 

@@ -24,7 +24,7 @@ class Snow {
         this.gravity       = this.parameters.gravity
         this.time_scale    = 1
         this.time          = 0
-        this.particle_size = 500
+        this.particle_size = 650
         this.pixel_ratio   = window.devicePixelRatio
 
         this.init()
@@ -93,7 +93,7 @@ class Snow {
 
     update() {
 
-        this.time += .0005 + (Store.audioControls[2].strength * .01)
+        this.time += .001 + (Store.audioControls[2].strength * .001)
         this.uniforms.time.value     = this.time
         this.uniforms.offset.value.x = this.wind.x * this.time * this.time_scale
         this.uniforms.offset.value.y = this.wind.y * this.time * this.time_scale

@@ -50,6 +50,7 @@ class ThreeController {
         this.initSnow()
         this.initBackground()
         this.initSphere()
+        this.initIntroChoregraphy()
         // this.initDummy()
 
         // Debug
@@ -87,6 +88,9 @@ class ThreeController {
             this.camera.updateProjectionMatrix()
             this.renderer.setSize(this.width, this.height)
             bounds = this.container.getBoundingClientRect()
+
+            // this.background.scale 
+            
         }, false)
 
         let last_mouse = { x: 0, y: 0 }
@@ -178,7 +182,7 @@ class ThreeController {
 
     initBackground(){
 
-        let geom = new THREE.PlaneBufferGeometry(this.width / 3.2, this.height / 3.2)
+        let geom = new THREE.PlaneBufferGeometry(100, 100)
 
         // let colors = Store.gradients[Math.floor(Store.gradients.length * Math.random())]
         let colors = [Store.activeColor[4], Store.activeColor[5]]
@@ -197,9 +201,12 @@ class ThreeController {
 
         this.background = new THREE.Mesh(geom, this.backgroundShader)
         this.scene.add(this.background)
-
         this.background.position.z = -100
 
+    }
+
+    initIntroChoregraphy(){
+        
     }
 
     enableDebugSimulation(){
@@ -240,7 +247,7 @@ class ThreeController {
         this.group.rotation.y = this.camera_rotation.x * this.cameraEasing.x
         // this.group.rotation.x = this.camera_rotation.y * this.cameraEasing.y
         this.group.scale.set(1 + this.camera_position.z, 1 + this.camera_position.z, 1 + this.camera_position.z)
-        this.background.scale.set(1.5 + this.camera_position.z, 1.5 + this.camera_position.z, 1.5 + this.camera_position.z)
+        this.background.scale.set((3 + this.camera_position.z) * (this.width / this.height), 3 + this.camera_position.z, 1)
         this.camera.lookAt(new THREE.Vector3(0, 0, 0))
 
         // offset background

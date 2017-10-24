@@ -18,6 +18,8 @@ class ReactiveRing {
         this.volumeTmp     = new THREE.Vector3(0, 0, 0)
         this.volumeDir     = new THREE.Vector3(0, 0, 0)
 
+        this.active        = false
+
         this.initMesh()
 
         if (DebugController.active) {
@@ -51,6 +53,7 @@ class ReactiveRing {
                 utime: { type: "f", value: 0 },
                 uAvancement: { type: "f", value: 0 },
                 volume: { type: "f", value: 0 },
+                opacity: { type: "f", value: 1 },
                 radius: { type: "f", value: this.defaultRadius },
                 simulationTex: { type: "t", value: FBO.rtt.texture },
                 matcap1: { type: "t", value: Store.textureThree.matcap1 },
@@ -100,6 +103,10 @@ class ReactiveRing {
 
     update(){
         
+        if (!this.active) {
+            // return
+        }
+
         if (this.meshShader != undefined && Store.volume > 10) {
             this.volumeTarget.x += .003
             this.volumeTarget.x = Math.min(this.volumeTarget.x, .91)
