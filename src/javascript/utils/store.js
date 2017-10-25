@@ -23,6 +23,8 @@ const Store = {
         ["#FFef83", "#4A4A48", "#FFFFFF", "#B5838D", "#070707", "#4A4A48"],
     ],
 
+    micIcon: document.querySelector('.mic'),
+    micProgress: document.querySelector('.progress'),
 
 }
 export default Store

@@ -57,7 +57,7 @@ void main() {
         alpha = 0.;
     }
 
-    // alpha *= opacity;
+    alpha *= opacity;
 
     gl_FragColor = vec4( color, alpha );
 

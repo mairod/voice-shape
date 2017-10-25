@@ -13,6 +13,10 @@ Loader.load().then(MicroInput.init()).then(() => {
 function animate() {
     requestAnimationFrame(animate);
 
+    if (Store.avancement < 1) {
+        Store.micProgress.style.heigt = Store.avancement * 100 + "%"
+    }
+
     // Updating components
     Store.time += 1
     Three.update()

@@ -93,7 +93,7 @@ class Snow {
 
     update() {
 
-        this.time += .001 + (Store.audioControls[2].strength * .001)
+        this.time += .001 //+ (Store.audioControls[2].strength * .001)
         this.uniforms.time.value     = this.time
         this.uniforms.offset.value.x = this.wind.x * this.time * this.time_scale
         this.uniforms.offset.value.y = this.wind.y * this.time * this.time_scale

@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import Store from '../utils/store'
 import FBO from './FBOSimulation'
 import DebugController from './DebugController'
-
+import TweenMax from 'gsap/tweenmax'
 
 class ReactiveRing {
     constructor(options){
@@ -53,12 +53,12 @@ class ReactiveRing {
                 utime: { type: "f", value: 0 },
                 uAvancement: { type: "f", value: 0 },
                 volume: { type: "f", value: 0 },
-                opacity: { type: "f", value: 1 },
                 radius: { type: "f", value: this.defaultRadius },
                 simulationTex: { type: "t", value: FBO.rtt.texture },
                 matcap1: { type: "t", value: Store.textureThree.matcap1 },
-
+                
                 // PARAMS
+                opacity: { type: "f", value: 0, gui: true, range: [0, 1] },
                 topHeight: { type: "f", value: 1.5, gui: true, range: [0, 5] },
                 blending: { type: "f", value: .45, gui: true, range: [0, 1] },
                 height: { type: "f", value: 20 * (this.index + 1), gui: true, range: [0, 50] },
@@ -101,15 +101,24 @@ class ReactiveRing {
         DebugController.register("config", this.config, "Ring params")
     }
 
-    update(){
-        
-        if (!this.active) {
-            // return
-        }
+    enable(){        
+        this.active = true
+    }
+    
+    disable(){
+        this.active = false
+    }
 
-        if (this.meshShader != undefined && Store.volume > 10) {
-            this.volumeTarget.x += .003
-            this.volumeTarget.x = Math.min(this.volumeTarget.x, .91)
+    update(){
+        if (this.active) {
+            
+            if (this.meshShader != undefined && Store.volume > 1) {
+                this.volumeTarget.x += .003
+                this.volumeTarget.x = Math.min(this.volumeTarget.x, .91)
+            }
+            this.meshShader.uniforms.opacity.value = Math.min(this.meshShader.uniforms.opacity.value += .05, 1)
+        } else {
+            this.meshShader.uniforms.opacity.value = Math.max(this.meshShader.uniforms.opacity.value -= .05, 0)
         }
 
         this.volumeDir.subVectors(this.volumeTarget, this.volumeTmp)
@@ -120,7 +129,9 @@ class ReactiveRing {
         this.meshShader.uniforms.volume.value = Store.volume * -.1        
         this.meshShader.uniforms.utime.value = Store.time
 
-        Store.avancement = this.volumeTmp.x
+        if (this.index === 0) {
+            Store.avancement = this.volumeTmp.x
+        }
 
     }
 }

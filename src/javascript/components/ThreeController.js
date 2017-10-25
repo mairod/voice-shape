@@ -6,6 +6,7 @@ import DebugController from './DebugController'
 import FBO from './FBOSimulation'
 import ReactiveRing from './reactiveRing'
 import Snow from './snow'
+import TimelineMax from 'gsap/timelinemax'
 
 class ThreeController {
 
@@ -77,6 +78,9 @@ class ThreeController {
         this.renderer.setSize(this.width, this.height)
 
         this.container.appendChild(this.renderer.domElement)
+        setTimeout(()=>{
+            this.renderer.domElement.classList.add('active')
+        }, 10)
     }
 
     initEvent() {
@@ -130,7 +134,6 @@ class ThreeController {
                 that.mouse.z = Math.min(Math.max(that.mouse.z, -.4), 1)
         })
 
-
     }
 
     initDummy(){
@@ -176,7 +179,9 @@ class ThreeController {
             fragmentShader: require('../../shaders/sphere.frag'),
         })
 
-        this.group.add(new THREE.Mesh(geom, material))
+        this.sphere = new THREE.Mesh(geom, material)
+        this.sphere.position.y = -200
+        this.group.add(this.sphere)
 
     }
 
@@ -206,7 +211,33 @@ class ThreeController {
     }
 
     initIntroChoregraphy(){
+        this.tl = new TimelineMax({ paused: true })
+        this.tl.stop(0)
         
+        let tmp = { x: 0, y: -200, z: 0 }
+        function onUpdate(){
+            this.sphere.position.y = tmp.y
+        }
+
+        this.tl.to(tmp, 3, { 
+            x: 0, y: 0,z: 0,
+            onUpdate: onUpdate.bind(this),
+            ease: Power3.easeOut
+        })
+        this.tl.add(()=>{
+            setTimeout(() => {
+                this.enableMic()
+            }, 100)
+        })
+
+        Store.timelineIntro = this.tl
+    }
+
+    enableMic(){
+        Store.micIcon.classList.add('active')
+        for (var i = 0; i < this.rings.length; i++) {
+            this.rings[i].enable()
+        }
     }
 
     enableDebugSimulation(){

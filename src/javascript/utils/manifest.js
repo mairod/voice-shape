@@ -2,7 +2,7 @@ const Manifest = {
 
     matcap1: "assets/matcap_6.png",
     noiseMap: "assets/noiseTest.jpg",
-    background: "assets/background.png",
+    background: "assets/background_1.png",
     particle: "assets/particles.png",
 
 }

@@ -31,9 +31,23 @@ class Loader {
     }
 
     close(){
-        
+        document.querySelector('#loader').style.display = "none"
         defer.resolve()
-        
+        setTimeout(() => { document.querySelector('.title').classList.add('active') }, 1000)
+        setTimeout(() => { document.querySelector('.introDesc').classList.add('active') }, 3000)
+        setTimeout(() => { 
+            document.querySelector('.title').classList.remove('active')
+            document.querySelector('.introDesc').classList.remove('active')
+        }, 5000)
+        setTimeout(() => { document.querySelector('.secoondScreen').classList.add('active') }, 6000)
+        setTimeout(() => { document.querySelector('.secondDesc').classList.add('active') }, 7500)
+        setTimeout(() => {
+            document.querySelector('.secoondScreen').classList.remove('active')
+            document.querySelector('.secondDesc').classList.remove('active')
+        }, 10000)
+        setTimeout(() => { 
+            Store.timelineIntro.play()
+        }, 11000)
     }
 }
 

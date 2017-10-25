@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "controlkit": "^0.1.9",
+    "gsap": "^1.20.3",
     "normalize-wheel": "^1.0.1",
     "three": "^0.87.1",
     "three.js": "^0.77.1",

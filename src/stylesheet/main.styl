@@ -1,13 +1,71 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Playfair+Display:400');
+
 body
     background-color: #eaeaea
     display: flex
     overflow: hidden
+    font-family: 'Open Sans', sans-serif;
+
+#loader
+    background-color: black
+    p
+        color: white
+        font-size: .6em
+        position: fixed
+        display: block
+        top 50%
+        left: 50%
+        letter-spacing: 5px
+        margin-top: 60px
+        transform: translate(-50%, -50%)
+        pointer-events: none
 
 h1
-    font-family sans-serif
-    color #262626
-    font-size 4em
-    margin 150px 0 0 150px
+    font-family: 'Playfair Display', serif;
+    font-weight: 400
+    color white
+    font-size 2em
+    letter-spacing: .05em
+    position: fixed
+    display: block
+    top 50%
+    left: 50%
+    letter-spacing: 2px
+    transform: translate(-50%, -50%)
+    user-select none
+    pointer-events: none
+    text-align: center
+
+    for num in (1..50)
+        span:nth-of-type({num})
+            transition-delay: "%ss" % (.08*num)
+    
+    span
+        display: inline-block
+        opacity: 0
+        transform: translate(0, -30px) rotateX(45deg)
+        transition: all .8s ease
+
+    &.active
+        span
+            opacity 1
+            transform: translate(0, 0)
+
+.dsc
+    color: white
+    font-size: .6em
+    position: fixed
+    display: block
+    top 50%
+    left: 50%
+    letter-spacing: 5px
+    margin-top: 60px
+    transform: translate(-50%, -50%)
+    pointer-events: none
+    opacity: 0
+    transition: opacity 1s ease
+    &.active
+        opacity: 1
 
 .fps
     top 0
@@ -22,8 +80,49 @@ h1
     top: 0
     left: 0
     background-color: black
+    z-index: -1
 
     canvas
         width: 100%
         height: 100%
         position: fixed
+        opacity: 0
+        transition: opacity .3s ease
+        &.active
+            opacity: 1
+
+.mic
+    position: fixed
+    bottom: 30px
+    width: 30px
+    height: 30px
+    left: 50%
+    margin-left: -15px
+    transform: translate(0, 30px) rotateX(45deg)
+    opacity: 0
+    transition: all 1s ease
+    overflow hidden
+    background-size: cover
+
+    div
+        overflow: hidden
+
+    .cover
+        position: absolute
+        top: 0
+        left: 0
+        width 30px
+        height 30px
+
+    .background
+        opacity .3
+    
+    .progress
+        opacity 1
+        height: 0
+        position: relative
+        transition: height .2s ease
+        
+    &.active
+        opacity: 1
+        transform: translate(0, 0)
