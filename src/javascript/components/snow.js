@@ -19,8 +19,8 @@ class Snow {
         this.wind          = new THREE.Vector3(this.parameters.wind.x, this.parameters.wind.y, this.parameters.wind.z)
         this.count         = this.parameters.count / 10
         this.multiplier    = 1
-        this.volume_corner = { x: - 150, y: -150, z: - 150 }
-        this.volume_size   = { x: 300, y:   300, z:  300 }
+        this.volume_corner = { x: - 250, y: -150, z: - 250 }
+        this.volume_size   = { x: 500, y:   300, z:  500 }
         this.gravity       = this.parameters.gravity
         this.time_scale    = 1
         this.time          = 0
@@ -35,10 +35,7 @@ class Snow {
     init() {
 
         this.uniforms = {}
-        this.material = null
-
-        console.log(Store.textureThree.particle)
-        
+        this.material = null        
 
         this.uniforms.pixelRatio      = { type: 'f', value:  window.devicePixelRatio }
         this.uniforms.volumeCorner    = { type: 'v3', value: new THREE.Vector3(this.volume_corner.x, this.volume_corner.y, this.volume_corner.z) }

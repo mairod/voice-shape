@@ -52,8 +52,8 @@ class ThreeController {
         this.initBackground()
         this.initSphere()
         this.initIntroChoregraphy()
-        // this.initDummy()
-
+        
+        window.GL = this.scene
         // Debug
         if (!DebugController.active) { return }
         this.enableDebugSimulation()
@@ -67,11 +67,8 @@ class ThreeController {
     }
 
     initEnvironement() {
-
-        // this.scene.fog = new THREE.FogExp2(0xeaeaea, 0.0020)
-
         this.renderer = new THREE.WebGLRenderer({
-            antialias: true,
+            antialias: window.devicePixelRatio < 1.5,
             alpha: true
         });
         this.renderer.setPixelRatio(window.devicePixelRatio)
@@ -91,10 +88,7 @@ class ThreeController {
             this.camera.aspect = this.width / this.height
             this.camera.updateProjectionMatrix()
             this.renderer.setSize(this.width, this.height)
-            bounds = this.container.getBoundingClientRect()
-
-            // this.background.scale 
-            
+            bounds = this.container.getBoundingClientRect()            
         }, false)
 
         let last_mouse = { x: 0, y: 0 }
@@ -122,11 +116,23 @@ class ThreeController {
         window.addEventListener("mousemove", onMove.bind(this))
         window.addEventListener("touchmove", (e) => { onMove(e.touches[0]).bind(this) }, true)
 
-        window.addEventListener("mousedown", () => this.drag = true)
-        window.addEventListener("mouseup", () => this.drag = false)
+        window.addEventListener("mousedown", () => {
+            this.drag = true
+            document.body.classList.add('grabbing')
+        })
+        window.addEventListener("mouseup", () => {
+            this.drag = false
+            document.body.classList.remove('grabbing')
+        })
 
-        document.addEventListener("touchstart", () => this.drag = true)
-        document.addEventListener("touchend", () => this.drag = false)
+        window.addEventListener("touchstart", () => {
+            this.drag = true
+            document.body.classList.add('grabbing')
+        })
+        window.addEventListener("touchend", () => {
+            this.drag = false
+            document.body.classList.remove('grabbing')
+        })
 
         document.addEventListener('wheel', (e) => {            
                 const normalized_wheel = normalizeWheel(e)
@@ -146,7 +152,7 @@ class ThreeController {
     }
 
     pickColor(){
-        Store.activeColor = Store.gradients[Math.floor(Store.gradients.length * Math.random())]
+        Store.activeColor = Store.gradients[Math.floor(Store.gradients.length * Math.random())]        
     }
 
     initFbo(){
@@ -200,7 +206,6 @@ class ThreeController {
             uniforms: {
                 utime: { type: "f", value: 0 },
                 offset: { type: "f", value: 0 },
-                opacity: { type: "f", value: 1 },
                 background: { type: "t", value: Store.textureThree.background },
                 color1: { type: "v3", value: new THREE.Color(colors[0]) },
                 color2: { type: "v3", value: new THREE.Color(colors[1]) },
@@ -269,27 +274,27 @@ class ThreeController {
     }
 
     reset(){
-
+        Store.micProgress.style.height = 0
         Store.restartBtn.classList.remove('active')
         for (var i = 0; i < this.rings.length; i++) {
             this.rings[i].playHideAnim()
         }
         this.mouse.z = -.3
+        this.pickColor()
         this.changeBackground()
-
         setTimeout(() => {
             for (var i = 0; i < this.rings.length; i++) {
                 this.rings[i].playHideAnim()
-                console.log(this.rings[i].mesh);
-                this.scene.remove()
             }
             this.rings.length = 0
-            for (var i = 0; i < this.rings.length; i++) {
-                this.rings[i].enable()
-            }
         }, 2000);
         setTimeout(() => {
             this.initMesh()
+            for (var i = 0; i < this.rings.length; i++) {
+                this.rings[i].enable()
+            }
+            this.enableMic()
+            Store.avancement = 0
         }, 3000);
         // this.initMesh()
     }
@@ -297,25 +302,37 @@ class ThreeController {
     changeBackground(){
         let tl = new TimelineMax()
 
-        let tmp = { value: 1 }
-        function onUpdate() {
-            this.backgroundShader.uniforms.opacity.value = tmp.value
+        let nc1 = new THREE.Color(Store.activeColor[4])
+        let nc2 = new THREE.Color(Store.activeColor[5])
+
+        let tmp = {
+            c1r: this.backgroundShader.uniforms.color1.value.r,
+            c1g: this.backgroundShader.uniforms.color1.value.g,
+            c1b: this.backgroundShader.uniforms.color1.value.b,
+            c2r: this.backgroundShader.uniforms.color2.value.r,
+            c2g: this.backgroundShader.uniforms.color2.value.g,
+            c2b: this.backgroundShader.uniforms.color2.value.b
         }
-        function onComplete(){
-            this.pickColor()
+
+        function onUpdate() {
+            this.backgroundShader.uniforms.color1.value.r = tmp.c1r
+            this.backgroundShader.uniforms.color1.value.g = tmp.c1g
+            this.backgroundShader.uniforms.color1.value.b = tmp.c1b
+            this.backgroundShader.uniforms.color2.value.r = tmp.c2r
+            this.backgroundShader.uniforms.color2.value.g = tmp.c2g
+            this.backgroundShader.uniforms.color2.value.b = tmp.c2b
         }
 
         tl.to(tmp, 1, {
-            value: 0,
+            c1r: nc1.r,
+            c1g: nc1.g,
+            c1b: nc1.b,
+            c2r: nc2.r,
+            c2g: nc2.g,
+            c2b: nc2.b,
             onUpdate: onUpdate.bind(this),
-            ease: Power3.easeOut,
-            onComplete: onComplete.bind(this)
+            ease: Power3.easeOut
         })
-        tl.to(tmp, 1, {
-            value: 1,
-            onUpdate: onUpdate.bind(this),
-            ease: Power3.easeOut,
-        }, 1.1)
     }
 
     enableDebugSimulation(){
@@ -354,7 +371,6 @@ class ThreeController {
         this.camera_position.addVectors(this.camera_position, this.camera_direction)
         
         this.group.rotation.y = this.camera_rotation.x * this.cameraEasing.x
-        // this.group.rotation.x = this.camera_rotation.y * this.cameraEasing.y
 
         this.group.scale.set(1 + this.camera_position.z, 1 + this.camera_position.z, 1 + this.camera_position.z)
         this.background.scale.set((3 + this.camera_position.z) * (this.width / this.height), 3 + this.camera_position.z, 1)

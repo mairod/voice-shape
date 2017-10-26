@@ -1,7 +1,6 @@
 uniform sampler2D background;
 uniform float utime;
 uniform float offset;
-uniform float opacity;
 uniform vec3 color1;
 uniform vec3 color2;
 
@@ -17,6 +16,6 @@ void main() {
 
     vec3 color = mix(color1, color2, uv.y) * tex;
 
-    gl_FragColor = vec4( color, opacity );
+    gl_FragColor = vec4( color, 1. );
 
 }

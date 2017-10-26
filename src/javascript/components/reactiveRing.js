@@ -36,7 +36,6 @@ class ReactiveRing {
         
         let geom = new THREE.TorusBufferGeometry(40 * (this.index + 1) , this.defaultRadius, 30, 200)
         // let geom = new THREE.CylinderBufferGeometry(20, 20, 100, 64, 1023, true)
-        // 265 * 256 Vertices (65536)
 
         // Pick colors
         let i = this.index + 1
@@ -74,16 +73,12 @@ class ReactiveRing {
             vertexShader: require('../../shaders/meshShader_1.vert'),
             fragmentShader: require('../../shaders/meshShader_1.frag'),
             side: THREE.DoubleSide,
-            // wireframe: true,
             transparent: true,
-            shading: THREE.SmoothShading,
-            // depthTest: false
+            flatShading: false
         })
-
 
         let mesh = new THREE.Mesh(geom, this.meshShader)
 
-        // mesh.rotation.x = Math.PI * 2 * Math.random()
         mesh.rotation.y = Math.PI * 2 * Math.random()
         mesh.rotation.z = Math.PI * 2 * Math.random()
 
@@ -92,7 +87,6 @@ class ReactiveRing {
     }
 
     initGUI(){
-
         for (var key in this.meshShader.uniforms) {
             if (this.meshShader.uniforms.hasOwnProperty(key)) {
                 var element = this.meshShader.uniforms[key];
@@ -101,7 +95,6 @@ class ReactiveRing {
                 }
             }
         }
-        
         DebugController.register("config", this.config, "Ring params")
     }
 
@@ -120,12 +113,14 @@ class ReactiveRing {
 
     playHideAnim(){
         this.disable()
+        setTimeout(() => {
+            this.scene.remove(this.mesh)
+        }, 1000)
     }
 
     update(){
         if (this.active) {
-            
-            if (this.meshShader != undefined && Store.volume > 10) {
+            if (this.meshShader != undefined && Store.volume > 30) {
                 this.volumeTarget.x += .003
                 this.volumeTarget.x = Math.min(this.volumeTarget.x, .91)
             }
@@ -139,7 +134,7 @@ class ReactiveRing {
         this.volumeTmp.addVectors(this.volumeTmp, this.volumeDir)
 
         this.rotationDir.subVectors(this.rotationTarget, this.rotationTmp)
-        this.rotationDir.multiplyScalar(.01)
+        this.rotationDir.multiplyScalar(.05)
         this.rotationTmp.addVectors(this.rotationTmp, this.rotationDir)
 
         this.mesh.rotation.y = this.rotationTmp.y

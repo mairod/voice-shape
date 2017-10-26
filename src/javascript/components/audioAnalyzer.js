@@ -98,7 +98,7 @@ class AudioAnalyzer {
             var that = this
             control.frequency = options.bufferPosition
             if (this.debug) {
-                console.log('New audio control point created at buffer position', control.frequency)
+                // console.log('New audio control point created at buffer position', control.frequency)
             }
             control._data = {
                 position: {
@@ -112,7 +112,7 @@ class AudioAnalyzer {
             control.shift = function (frequency) {
                 if (frequency != undefined) {
                     that.controls[control.id].frequency = frequency
-                    console.log('Audio control (id : ' + control.id + ') point shifted at buffer position ', frequency)
+                    // console.log('Audio control (id : ' + control.id + ') point shifted at buffer position ', frequency)
                 }
             }
             this.controls.push(control)

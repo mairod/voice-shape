@@ -5,10 +5,19 @@ import Store from './utils/store'
 import Loader from './utils/loader'
 
 let Three
-Loader.load().then(MicroInput.init()).then(() => {
-    Three = new ThreeController({ container: document.querySelector('#container') })
-    animate()
-})
+
+function micSucces(stream) {
+    Loader.load().then(MicroInput.init()).then(() => {
+        Three = new ThreeController({ container: document.querySelector('#container') })
+        animate()
+    })
+}
+function micFail(error) {}
+function checkMic(){
+    navigator.getUserMedia({ audio: true }, micSucces.bind(this), micFail.bind(this))
+}
+
+checkMic()
 
 let progress = 0
     

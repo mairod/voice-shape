@@ -21,6 +21,8 @@ const Store = {
         ["#A74482", "#693668", "#A74482", "#FFB997", "#F67E7D", "#FFB997"],
         ["#6D6875", "#2D898B", "#EACDC2", "#B5838D", "#E5989B", "#FFFFFF"],
         ["#FFef83", "#4A4A48", "#FFFFFF", "#B5838D", "#070707", "#4A4A48"],
+        ["#AD9BAA", "#A1CDA8", "#FFFFFF", "#627264", "#AD9BAA", "#C5E7E2"],
+        ["#3D2B3D", "#3D2B3D", "#9B1D20", "#301010", "#9B1D20", "#3D2B3D"],
     ],
 
     micIcon: document.querySelector('.mic'),
