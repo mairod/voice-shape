@@ -238,6 +238,30 @@ class ThreeController {
         for (var i = 0; i < this.rings.length; i++) {
             this.rings[i].enable()
         }
+
+        Store.micIsAcive = true
+        Store.shapeActive = true
+    
+        this.mouse.z = -.3
+
+    }
+
+    disableMic(){
+        Store.micIsAcive = false
+        Store.micIcon.classList.remove('active')
+
+        // this.playAnimFull()
+    }
+    
+    declareEnd(){
+        if (Store.shapeActive) {
+            this.disableMic()
+            Store.shapeActive = false
+        }
+        this.mouse.z = -.4
+        for (var i = 0; i < this.rings.length; i++) {
+            this.rings[i].playEndAnim()
+        }
     }
 
     enableDebugSimulation(){
@@ -277,6 +301,7 @@ class ThreeController {
         
         this.group.rotation.y = this.camera_rotation.x * this.cameraEasing.x
         // this.group.rotation.x = this.camera_rotation.y * this.cameraEasing.y
+
         this.group.scale.set(1 + this.camera_position.z, 1 + this.camera_position.z, 1 + this.camera_position.z)
         this.background.scale.set((3 + this.camera_position.z) * (this.width / this.height), 3 + this.camera_position.z, 1)
         this.camera.lookAt(new THREE.Vector3(0, 0, 0))

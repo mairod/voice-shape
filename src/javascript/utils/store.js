@@ -25,6 +25,8 @@ const Store = {
 
     micIcon: document.querySelector('.mic'),
     micProgress: document.querySelector('.progress'),
+    micIsAcive: false,
+    shapeActive: false
 
 }
 export default Store

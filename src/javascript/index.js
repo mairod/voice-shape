@@ -9,12 +9,17 @@ Loader.load().then(MicroInput.init()).then(() => {
     Three = new ThreeController({ container: document.querySelector('#container') })
     animate()
 })
+
+let progress = 0
     
 function animate() {
     requestAnimationFrame(animate);
 
-    if (Store.avancement < 1) {
-        Store.micProgress.style.heigt = Store.avancement * 100 + "%"
+    progress = Math.min((Store.avancement * 1.1) * 100, 100)
+    if (Store.avancement < 1 && Store.micIsAcive && progress < 100) {
+        Store.micProgress.style.height = progress + "%"
+    } else if( progress === 100 ){
+        Three.declareEnd()
     }
 
     // Updating components

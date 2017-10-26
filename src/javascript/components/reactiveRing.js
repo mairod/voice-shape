@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import Store from '../utils/store'
 import FBO from './FBOSimulation'
 import DebugController from './DebugController'
-import TweenMax from 'gsap/tweenmax'
+import TimelineMax from 'gsap/timelinemax'
 
 class ReactiveRing {
     constructor(options){
@@ -17,6 +17,10 @@ class ReactiveRing {
         this.volumeTarget  = new THREE.Vector3(0, 0, 0)
         this.volumeTmp     = new THREE.Vector3(0, 0, 0)
         this.volumeDir     = new THREE.Vector3(0, 0, 0)
+
+        this.rotationTarget  = new THREE.Vector3(0, 0, 0)
+        this.rotationTmp     = new THREE.Vector3(0, 0, 0)
+        this.rotationDir     = new THREE.Vector3(0, 0, 0)
 
         this.active        = false
 
@@ -109,10 +113,19 @@ class ReactiveRing {
         this.active = false
     }
 
+    playEndAnim(){
+        this.rotationTarget.y += Math.PI
+    }
+
+    playHideAnim(){
+        this.rotationTarget.x += Math.PI
+        this.disable()
+    }
+
     update(){
         if (this.active) {
             
-            if (this.meshShader != undefined && Store.volume > 1) {
+            if (this.meshShader != undefined && Store.volume > 10) {
                 this.volumeTarget.x += .003
                 this.volumeTarget.x = Math.min(this.volumeTarget.x, .91)
             }
@@ -124,6 +137,13 @@ class ReactiveRing {
         this.volumeDir.subVectors(this.volumeTarget, this.volumeTmp)
         this.volumeDir.multiplyScalar(.1)
         this.volumeTmp.addVectors(this.volumeTmp, this.volumeDir)
+
+        this.rotationDir.subVectors(this.rotationTarget, this.rotationTmp)
+        this.rotationDir.multiplyScalar(.06)
+        this.rotationTmp.addVectors(this.rotationTmp, this.rotationDir)
+
+        this.mesh.rotation.y = this.rotationTmp.y
+        this.mesh.rotation.x = this.rotationTmp.x
 
         this.meshShader.uniforms.uAvancement.value = this.volumeTmp.x
         this.meshShader.uniforms.volume.value = Store.volume * -.1        
