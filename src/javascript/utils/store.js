@@ -25,6 +25,7 @@ const Store = {
 
     micIcon: document.querySelector('.mic'),
     micProgress: document.querySelector('.progress'),
+    restartBtn: document.querySelector('.restart'),
     micIsAcive: false,
     shapeActive: false
 

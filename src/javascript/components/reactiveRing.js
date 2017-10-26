@@ -114,11 +114,11 @@ class ReactiveRing {
     }
 
     playEndAnim(){
-        this.rotationTarget.y += Math.PI
+        let dir = this.index === 0 ? -1 : 1
+        this.rotationTarget.y += Math.PI * dir
     }
 
     playHideAnim(){
-        this.rotationTarget.x += Math.PI
         this.disable()
     }
 
@@ -129,9 +129,9 @@ class ReactiveRing {
                 this.volumeTarget.x += .003
                 this.volumeTarget.x = Math.min(this.volumeTarget.x, .91)
             }
-            this.meshShader.uniforms.opacity.value = Math.min(this.meshShader.uniforms.opacity.value += .05, 1)
+            this.meshShader.uniforms.opacity.value = Math.min(this.meshShader.uniforms.opacity.value += .03, 1)
         } else {
-            this.meshShader.uniforms.opacity.value = Math.max(this.meshShader.uniforms.opacity.value -= .05, 0)
+            this.meshShader.uniforms.opacity.value = Math.max(this.meshShader.uniforms.opacity.value -= .03, 0)
         }
 
         this.volumeDir.subVectors(this.volumeTarget, this.volumeTmp)
@@ -139,7 +139,7 @@ class ReactiveRing {
         this.volumeTmp.addVectors(this.volumeTmp, this.volumeDir)
 
         this.rotationDir.subVectors(this.rotationTarget, this.rotationTmp)
-        this.rotationDir.multiplyScalar(.06)
+        this.rotationDir.multiplyScalar(.01)
         this.rotationTmp.addVectors(this.rotationTmp, this.rotationDir)
 
         this.mesh.rotation.y = this.rotationTmp.y

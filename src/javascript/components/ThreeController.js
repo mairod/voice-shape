@@ -134,6 +134,10 @@ class ThreeController {
                 that.mouse.z = Math.min(Math.max(that.mouse.z, -.4), 1)
         })
 
+        Store.restartBtn.addEventListener('click', ()=>{
+            this.reset()
+        })
+
     }
 
     initDummy(){
@@ -196,6 +200,7 @@ class ThreeController {
             uniforms: {
                 utime: { type: "f", value: 0 },
                 offset: { type: "f", value: 0 },
+                opacity: { type: "f", value: 1 },
                 background: { type: "t", value: Store.textureThree.background },
                 color1: { type: "v3", value: new THREE.Color(colors[0]) },
                 color2: { type: "v3", value: new THREE.Color(colors[1]) },
@@ -249,19 +254,68 @@ class ThreeController {
     disableMic(){
         Store.micIsAcive = false
         Store.micIcon.classList.remove('active')
-
-        // this.playAnimFull()
+        Store.restartBtn.classList.add('active')
     }
     
     declareEnd(){
         if (Store.shapeActive) {
             this.disableMic()
             Store.shapeActive = false
+            this.mouse.z = -.4
+            for (var i = 0; i < this.rings.length; i++) {
+                this.rings[i].playEndAnim()
+            }
         }
-        this.mouse.z = -.4
+    }
+
+    reset(){
+
+        Store.restartBtn.classList.remove('active')
         for (var i = 0; i < this.rings.length; i++) {
-            this.rings[i].playEndAnim()
+            this.rings[i].playHideAnim()
         }
+        this.mouse.z = -.3
+        this.changeBackground()
+
+        setTimeout(() => {
+            for (var i = 0; i < this.rings.length; i++) {
+                this.rings[i].playHideAnim()
+                console.log(this.rings[i].mesh);
+                this.scene.remove()
+            }
+            this.rings.length = 0
+            for (var i = 0; i < this.rings.length; i++) {
+                this.rings[i].enable()
+            }
+        }, 2000);
+        setTimeout(() => {
+            this.initMesh()
+        }, 3000);
+        // this.initMesh()
+    }
+
+    changeBackground(){
+        let tl = new TimelineMax()
+
+        let tmp = { value: 1 }
+        function onUpdate() {
+            this.backgroundShader.uniforms.opacity.value = tmp.value
+        }
+        function onComplete(){
+            this.pickColor()
+        }
+
+        tl.to(tmp, 1, {
+            value: 0,
+            onUpdate: onUpdate.bind(this),
+            ease: Power3.easeOut,
+            onComplete: onComplete.bind(this)
+        })
+        tl.to(tmp, 1, {
+            value: 1,
+            onUpdate: onUpdate.bind(this),
+            ease: Power3.easeOut,
+        }, 1.1)
     }
 
     enableDebugSimulation(){
